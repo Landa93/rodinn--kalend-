@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>❤️ Náš rodinný kalendář</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="holidays.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+    <!-- PŘIHLAŠOVACÍ OBRAZOVKA -->
+    <section id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-icon">❤️</div>
+
+            <h1>Náš rodinný kalendář</h1>
+            <p>Společné chvíle na jednom místě 📅</p>
+
+            <form id="loginForm">
+                <label for="loginEmail">E-mail</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Tvůj e-mail"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="loginPassword">Heslo</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Tvoje heslo"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit" class="primary-btn">
+                    Přihlásit se ❤️
+                </button>
+            </form>
+
+            <p id="loginError" class="error-message"></p>
+        </div>
+    </section>
+
+    <!-- HLAVNÍ APLIKACE -->
+    <main id="appScreen" class="app-screen hidden">
+
+        <header class="app-header">
+            <div class="header-title">
+                <h1>❤️ Rodinný kalendář</h1>
+                <p>Naše společné plány</p>
+            </div>
+
+            <div class="header-actions">
+                <span id="userName"></span>
+
+                <button id="logoutBtn" class="secondary-btn">
+                    Odhlásit
+                </button>
+            </div>
+        </header>
+
+        <!-- BAREVNÁ LEGENDA -->
+        <section class="legend">
+            <span class="legend-item">
+                <i class="legend-dot blue"></i> Já
+            </span>
+
+            <span class="legend-item">
+                <i class="legend-dot pink"></i> Manželka
+            </span>
+
+            <span class="legend-item">
+                <i class="legend-dot red"></i> Mamka – práce
+            </span>
+
+            <span class="legend-item">
+                <i class="legend-dot green"></i> Servis oken
+            </span>
+        </section>
+
+        <!-- OVLÁDÁNÍ KALENDÁŘE -->
+        <section class="calendar-controls">
+            <button id="prevMonth" class="nav-btn" aria-label="Předchozí měsíc">
+                ❮
+            </button>
+
+            <h2 id="monthTitle"></h2>
+
+            <button id="nextMonth" class="nav-btn" aria-label="Další měsíc">
+                ❯
+            </button>
+
+            <button id="todayBtn" class="secondary-btn">
+                Dnes
+            </button>
+
+            <button id="addEventBtn" class="primary-btn">
+                + Přidat událost
+            </button>
+        </section>
+
+        <!-- KALENDÁŘ -->
+        <section class="calendar-wrapper">
+            <div class="weekday-header">
+                <div>Po</div>
+                <div>Út</div>
+                <div>St</div>
+                <div>Čt</div>
+                <div>Pá</div>
+                <div>So</div>
+                <div>Ne</div>
+            </div>
+
+            <div id="calendarGrid" class="calendar-grid"></div>
+        </section>
+
+        <!-- UDÁLOSTI VYBRANÉHO DNE -->
+        <section class="day-details">
+            <h3 id="selectedDayTitle">Události dne</h3>
+            <div id="selectedDayEvents"></div>
+        </section>
+
+    </main>
+
+    <!-- OKNO PRO PŘIDÁNÍ / ÚPRAVU UDÁLOSTI -->
+    <div id="eventModal" class="modal hidden">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 id="modalTitle">Nová událost</h2>
+
+                <button id="closeModalBtn" class="close-btn" aria-label="Zavřít">
+                    ✕
+                </button>
+            </div>
+
+            <form id="eventForm">
+                <input type="hidden" id="eventId">
+
+                <label for="eventTitle">Název události</label>
+                <input
+                    type="text"
+                    id="eventTitle"
+                    placeholder="Například: Návštěva babičky"
+                    maxlength="150"
+                    required
+                >
+
+                <label for="eventCategory">Komu událost patří?</label>
+                <select id="eventCategory" required>
+                    <option value="me">🔵 Já</option>
+                    <option value="wife">🩷 Manželka</option>
+                    <option value="mom">🔴 Mamka – práce</option>
+                </select>
+
+                <label for="eventDate">Datum</label>
+                <input type="date" id="eventDate" required>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="eventAllDay">
+                    Celodenní událost
+                </label>
+
+                <div id="timeFields" class="time-fields">
+                    <div>
+                        <label for="eventStartTime">Od</label>
+                        <input type="time" id="eventStartTime" value="09:00">
+                    </div>
+
+                    <div>
+                        <label for="eventEndTime">Do</label>
+                        <input type="time" id="eventEndTime" value="10:00">
+                    </div>
+                </div>
+
+                <label for="eventDescription">Poznámka (nepovinné)</label>
+                <textarea
+                    id="eventDescription"
+                    rows="3"
+                    placeholder="Další informace..."
+                ></textarea>
+
+                <div class="modal-actions">
+                    <button type="button" id="deleteEventBtn" class="danger-btn hidden">
+                        Smazat
+                    </button>
+
+                    <button type="submit" class="primary-btn">
+                        Uložit událost ❤️
+                    </button>
+                </div>
+            </form>
+
+            <p id="eventError" class="error-message"></p>
+        </div>
+    </div>
+
+</body>
+</html>
